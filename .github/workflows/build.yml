@@ -1,0 +1,39 @@
+name: Build Linux binary
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Kody almak
+        uses: actions/checkout@v4
+
+      - name: Python gurmak
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: PyInstaller gurmak
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+
+      - name: Binary ýasamak
+        run: pyinstaller --onefile --name usb_suzgic usb_suzgic.py
+
+      - name: Netijäni taýýarlamak
+        run: |
+          mkdir out
+          cp dist/usb_suzgic out/usb_suzgic
+          cp install_binary.sh out/install_binary.sh
+          chmod +x out/usb_suzgic out/install_binary.sh
+
+      - name: Faýllary ýüklemek
+        uses: actions/upload-artifact@v4
+        with:
+          name: usb_suzgic-ubuntu22
+          path: out/
